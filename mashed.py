@@ -9,6 +9,7 @@ from __future__ import print_function
 import requests
 import os
 import sys
+import re
 
 HEADERS = {
 	"Content-Type": "application/json",
@@ -23,7 +24,7 @@ HEADERS = {
 	"Cookie": "", #Your cookies go here
 }
 
-VARIANT = 18878472 #Your variant number goes here, get it from a http query
+VARIANT = 19992612 #Your variant number goes here
 
 RED = "\033[31m"
 GRN = "\033[32m"
@@ -89,6 +90,8 @@ else:
 								answer += (k["text"] + "; ")
 					elif i["given_answer"]["@answer_type"] == "answer/number":
 						answer = str(i["given_answer"]["number"])
+					elif i["given_answer"]["@answer_type"] == "answer/string":
+						answer = str(i["given_answer"]["string"])
 					elif i["given_answer"]["@answer_type"] == "answer/groups":
 						answer = ""
 						for i_group in i["given_answer"]["groups"]:
@@ -110,7 +113,7 @@ else:
 											answer += i_match["text"] + "; "
 
 					print(f'{GRN + BLD}Found {RES}correct answer:')
-					print(f'     {BLD}Q:{RES} "' + j["question_elements"][0]["text"].replace("\n", "\n     ") + '": ')
-					print(f'     {BLD}A:{RES} {answer}{RES}')
+					print(f'     {BLD}Q:{RES} "' + j["question_elements"][0]["text"].replace("\u00AD", '').replace("\n", "\n     ") + '"')
+					print(f'     {BLD}A:{RES} ' + answer.replace("\u00AD", '').replace("\n", "\n     ") + RES)
 					break
 			found_answers.append(tid)
