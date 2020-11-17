@@ -2,7 +2,7 @@
 '''''''''''''''''''''''''''''
 COPYRIGHT FETCH DEVELOPMENT,
 2020
-ALL RIGHTS RESERVED
+
 '''''''''''''''''''''''''''''
 
 from __future__ import print_function
