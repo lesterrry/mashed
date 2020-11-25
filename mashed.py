@@ -117,3 +117,4 @@ else:
 					print(f'     {BLD}A:{RES} ' + answer.replace("\u00AD", '').replace("\n", "\n     ") + RES)
 					break
 			found_answers.append(tid)
+	print(f'{BLD}{len(found_answers)}/{tasks_count}{RES} answers found')
