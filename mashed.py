@@ -22,7 +22,7 @@ HEADERS = {
 	"Connection": "keep-alive",
 	"Referer": "https://uchebnik.mos.ru/exam/test/test_by_binding/9027558/homework/117518999/variant/18878473/num/1?generation_context_type=homework&registration=2a86e7e2-edff-28db-12c4-ba2e99a924cb",
 	"Cookie": "", #Your cookies go here
-}
+	}
 
 VARIANT = 19992612 #Your variant number goes here
 
@@ -82,12 +82,12 @@ else:
 					if i["given_answer"]["@answer_type"] == "answer/single":
 						for k in j["answer"]["options"]:
 							if k["id"] == i["given_answer"]["id"]:
-								answer = k["text"]
+								answer = k["content"][0]["content"] if k["content"] else k["text"]
 					elif i["given_answer"]["@answer_type"] == "answer/multiple":
 						answer = ""
 						for k in j["answer"]["options"]:
 							if k["id"] in i["given_answer"]["ids"]:
-								answer += (k["text"] + "; ")
+								answer += (k["content"][0]["content"] if k["content"] else k["text"] + "; ")
 					elif i["given_answer"]["@answer_type"] == "answer/number":
 						answer = str(i["given_answer"]["number"])
 					elif i["given_answer"]["@answer_type"] == "answer/string":
@@ -97,11 +97,11 @@ else:
 						for i_group in i["given_answer"]["groups"]:
 							for k in j["answer"]["options"]:
 									if k["id"] == i_group["group_id"]:
-										answer += ('GROUP "' + k["text"] + '": ')
+										answer += ('GROUP "' + k["content"][0]["content"] if k["content"] else k["text"] + '": ')
 							for i_opt in i_group["options_ids"]:
 								for k in j["answer"]["options"]:
 									if k["id"] == i_opt:
-										answer += (k["text"] + "; ")
+										answer += (k["content"][0]["content"] if k["content"] else k["text"] + "; ")
 					elif i["given_answer"]["@answer_type"] == "answer/match":
 						answer = ""
 						for k in j["answer"]["options"]:
@@ -110,7 +110,7 @@ else:
 								for i_match in j["answer"]["options"]:
 									for m in i["given_answer"]["match"][k["id"]]:
 										if i_match["id"] == m:
-											answer += i_match["text"] + "; "
+											answer += (i_match["content"][0]["content"] if i_match["content"] else i_match["text"]) + "; "
 
 					print(f'{GRN + BLD}Found {RES}correct answer:')
 					print(f'     {BLD}Q:{RES} "' + j["question_elements"][0]["text"].replace("\u00AD", '').replace("\n", "\n     ") + '"')
@@ -118,3 +118,5 @@ else:
 					break
 			found_answers.append(tid)
 	print(f'{BLD}{len(found_answers)}/{tasks_count}{RES} answers found')
+	print(f"Don't forget to thank @lesterrry and his enormous brain!")
+	print("========================================================")
