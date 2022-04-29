@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''''''''''''''''''''''''''''
 COPYRIGHT FETCH DEVELOPMENT,
-2020
+2020-2022
 
 '''''''''''''''''''''''''''''
 
@@ -46,7 +46,7 @@ if r.status_code != 200:
 else:
 	resp_json = r.json()
 	print(f'{GRN + BLD}SUCCESS{RES}')
-	tasks_count = resp_json["tasks_count"]
+	tasks_count = resp_json['tasks_count']
 	print(f'{GRN + BLD}FOUND {RES}test with {BLD + str(tasks_count) + RES} questions')
 
 print(f'{ORG + BLD}RETRIEVING{RES} task instances...')
@@ -56,7 +56,7 @@ for i in range(0, tasks_count):
 		report_error(g.status_code)
 	else:
 		task_json = g.json()
-		#tasks.append({"name": task_json["question_elements"][0]["text"], "id": task_json["id"]})
+		#tasks.append({"name": task_json['question_elements'][0]['text'], "id": task_json['id']})
 		tasks.append(task_json)
 		print(f'{GRN + BLD}RETRIEVED {RES + BLD + str(i + 1)}/{str(tasks_count) + RES}')
 
@@ -74,49 +74,50 @@ else:
 			break
 		#https://uchebnik.mos.ru/exam/rest/secure/api/test_task/18878473/1
 		g = requests.get(f"https://uchebnik.mos.ru/exam/rest/secure/api/test_task/{VARIANT}/{i}", headers = HEADERS)
-		tid = i["task_id"]
-		if i["answer_status"] == "correct" and tid not in found_answers:
+		tid = i['task_id']
+		if i['answer_status'] == "correct" and tid not in found_answers:
 			for j in tasks:
-				if j["id"] == tid:
-					answer = "<NOT YET SUPPORTED>"
-					if i["given_answer"]["@answer_type"] == "answer/single":
-						for k in j["answer"]["options"]:
-							if k["id"] == i["given_answer"]["id"]:
-								answer = k["content"][0]["content"] if k["content"] else k["text"]
-					elif i["given_answer"]["@answer_type"] == "answer/multiple":
-						answer = ""
-						for k in j["answer"]["options"]:
-							if k["id"] in i["given_answer"]["ids"]:
-								answer += (k["content"][0]["content"] if k["content"] else k["text"] + "; ")
-					elif i["given_answer"]["@answer_type"] == "answer/number":
-						answer = str(i["given_answer"]["number"])
-					elif i["given_answer"]["@answer_type"] == "answer/string":
-						answer = str(i["given_answer"]["string"])
-					elif i["given_answer"]["@answer_type"] == "answer/groups":
-						answer = ""
-						for i_group in i["given_answer"]["groups"]:
-							for k in j["answer"]["options"]:
-									if k["id"] == i_group["group_id"]:
-										answer += ('GROUP "' + k["content"][0]["content"] if k["content"] else k["text"] + '": ')
-							for i_opt in i_group["options_ids"]:
-								for k in j["answer"]["options"]:
-									if k["id"] == i_opt:
-										answer += (k["content"][0]["content"] if k["content"] else k["text"] + "; ")
-					elif i["given_answer"]["@answer_type"] == "answer/match":
-						answer = ""
-						for k in j["answer"]["options"]:
-							if k["id"] in i["given_answer"]["match"]:
-								answer += k["text"] + " => "
-								for i_match in j["answer"]["options"]:
-									for m in i["given_answer"]["match"][k["id"]]:
-										if i_match["id"] == m:
-											answer += (i_match["content"][0]["content"] if i_match["content"] else i_match["text"]) + "; "
-
-					print(f'{GRN + BLD}Found {RES}correct answer:')
-					print(f'     {BLD}Q:{RES} "' + j["question_elements"][0]["text"].replace("\u00AD", '').replace("\n", "\n     ") + '"')
+				if j['id'] == tid:
+					match i['given_answer']['@answer_type']:
+						case "answer/single":
+							for k in j['answer']['options']:
+								if k['id'] == i['given_answer']['id']:
+									answer = k['content'][0]['content'] if k['content'] else k['text']
+						case "answer/multiple":
+							answer = ""
+							for k in j['answer']['options']:
+								if k['id'] in i['given_answer']['ids']:
+									answer += (k['content'][0]['content'] if k['content'] else k['text'] + "; ")
+						case "answer/number":
+							answer = str(i['given_answer']['number'])
+						case "answer/string":
+							answer = str(i['given_answer']['string'])
+						case "answer/groups":
+							answer = ""
+							for i_group in i['given_answer']['groups']:
+								for k in j['answer']['options']:
+										if k['id'] == i_group['group_id']:
+											answer += ('GROUP "' + k['content'][0]['content'] if k['content'] else k['text'] + '": ')
+								for i_opt in i_group['options_ids']:
+									for k in j['answer']['options']:
+										if k['id'] == i_opt:
+											answer += (k['content'][0]['content'] if k['content'] else k['text'] + "; ")
+						case "answer/match":
+							answer = ""
+							for k in j['answer']['options']:
+								if k['id'] in i['given_answer']['match']:
+									answer += k['text'] + " => "
+									for i_match in j['answer']['options']:
+										for m in i['given_answer']['match'][k['id']]:
+											if i_match['id'] == m:
+												answer += (i_match['content'][0]['content'] if i_match['content'] else i_match['text']) + "; "
+						case _:
+							answer = f"<TYPE {i['given_answer']['@answer_type']} NOT SUPPORTED>"
+					print(f"{GRN + BLD}Found {RES}correct answer:")
+					print(f"     {BLD}Q:{RES} '" + j['question_elements'][0]['text'].replace("\u00AD", '').replace("\n", "\n     ") + "'")
 					print(f'     {BLD}A:{RES} ' + answer.replace("\u00AD", '').replace("\n", "\n     ") + RES)
 					break
 			found_answers.append(tid)
 	print(f'{BLD}{len(found_answers)}/{tasks_count}{RES} answers found')
-	print(f"Don't forget to thank @lesterrry and his enormous brain!")
+	print(f"This is the last time 'mashed.py' is being run. \nIt's been fun two years.\nSo long.")
 	print("========================================================")
